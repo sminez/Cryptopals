@@ -2,7 +2,7 @@ from itertools import islice
 from os.path import dirname, join
 from string import ascii_lowercase, ascii_uppercase
 
-from cplib.utils import xor, repeating_key_xor, \
+from cplib.crypto import xor, repeating_key_xor, \
     break_char_xor, break_repeating_xor
 
 
