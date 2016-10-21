@@ -1,3 +1,11 @@
+'''
+My solutions to the Cryptopals challenges set1
+==============================================
+
+Most of the actual code can be found in cplib. These files contain
+use cases and solutions for the specific challenges themselves.
+'''
+from base64 import b64decode
 from itertools import islice
 from os.path import dirname, join
 from string import ascii_lowercase, ascii_uppercase
@@ -91,7 +99,6 @@ def challenge5():
 
 # https://cryptopals.com/sets/1/challenges/6
 def challenge6():
-    from base64 import b64decode
 
     path = join(dirname(__file__), 'challenge_data/6.txt')
 
