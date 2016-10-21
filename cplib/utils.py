@@ -66,12 +66,14 @@ def sort_by_value(d, reverse=False):
     return sorted(d, key=d.get, reverse=reverse)
 
 
-def chunks(it, size, fillvalue=None):
+def chunks(it, size):
     '''
     Split an iterable into even length chunks
     '''
-    zipped = zip_longest(*[iter(it)]*size, fillvalue=fillvalue)
-    return [list(chunk) for chunk in zipped]
+    if len(it) % size:
+        return [list(chunk) for chunk in zip(*[iter(it)]*size)]
+    else:
+        raise ValueError('Iterable is not divisible by {}'.format(size))
 
 
 def transpose(matrix):
