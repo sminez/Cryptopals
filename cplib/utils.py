@@ -36,6 +36,13 @@ def transpose(matrix):
     return [list(z) for z in zip(*matrix)]
 
 
+def cycle(seq, n):
+    '''
+    Rotate a seequence left, appending the initial element to the end
+    '''
+    return seq[n:] + seq[:n]
+
+
 def sliding_slice(size, col, as_lists=False):
     '''
     Yield a sliding series of iterables of length _size_ from a collection.

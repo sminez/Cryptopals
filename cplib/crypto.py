@@ -14,8 +14,8 @@ from string import ascii_lowercase
 from itertools import repeat, combinations, zip_longest
 
 from cplib.metrics import chi_squared, levenshtein
+from cplib.utils import sort_by_value, transpose, chunks, cycle
 from cplib.data import int_char_freqs, rel_char_freqs, AES_rcon, AES_sbox
-from cplib.utils import sort_by_value, transpose, chunks
 
 
 ##############################################################################
@@ -152,6 +152,7 @@ def break_repeating_xor(buf, max_key_size=10, verbose=False):
     # Nothing passed the threshold so return the best we've got
     return candidate
 
+
 ##############################################################################
 # .:Crypto :: AES:.
 # -----------------
@@ -162,8 +163,6 @@ def break_repeating_xor(buf, max_key_size=10, verbose=False):
 # https://en.wikipedia.org/wiki/Rijndael_S-box
 #
 # In GF(2^8), addition and subtraction are both bitwise XOR
-
-
 def AES_KS_core(_4bytes, iteration):
     _4bytes = [b for b in _4bytes]
     _4bytes = _4bytes[1:] + [_4bytes[0]]
@@ -237,15 +236,24 @@ def AES_encrypt(key, plaintext):
     try:
         key_len = len(key) * 8
         n_rounds = {128: 10, 192: 12, 256: 14}[key_len]
+        # Expand the user's key into each of the unique round keys
         round_keys = chunks(AES_key_schedule(key), 16)
+        state_blocks = _to_blocks(plaintext)
     except KeyError:
         raise ValueError('Invalid key length')
 
-    for round in range(n_rounds):
-        pass
-        # 1 .:Round-key expansion:.
-        # 2 .:Initial Round:.
-        #   AddRoundKey
+    for state in state_blocks:
+        for n in range(n_rounds):
+            round_key = round_keys(n)
+            if n != 1:  # In the first round we only XOR with the key
+                # SubBytes
+                state = [[AES_sbox[c] for c in b] for b in state]
+                # ShiftRows
+                for i, row in enumerate(state):
+                    row = cycle(row, 1 - i)
+                # MixColumns
+            # Add round key
+            state = xor(state, round_key)
         # 3 .:Rounds:.
         #   SubBytes
         #   ShiftRows
